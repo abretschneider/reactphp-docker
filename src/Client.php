@@ -807,16 +807,18 @@ class Client
      * Block until container id stops, then returns the exit code
      *
      * @param string $container container ID
+     * @param string $condition Wait until a container state reaches the given condition
      * @return PromiseInterface Promise<array> `array('StatusCode' => 0)` (see link)
      * @link https://docs.docker.com/engine/api/v1.40/#operation/ContainerWait
      */
-    public function containerWait($container)
+    public function containerWait($container, $condition = 'not-running')
     {
         return $this->browser->post(
             $this->uri->expand(
-                'containers/{container}/wait',
+                'containers/{container}/wait{?condition}',
                 array(
-                    'container' => $container
+                    'container' => $container,
+                    'condition' => $condition,
                 )
             )
         )->then(array($this->parser, 'expectJson'));
